@@ -20,7 +20,8 @@
     "ext-zip": "*",
     "ext-pdo": "*",
     "ext-iconv": "*",
-    "khanamiryan/qrcode-detector-decoder": "1.0.5.2"
+    "khanamiryan/qrcode-detector-decoder": "1.0.5.2",
+    "cccyun/php-whois": "^1.2"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

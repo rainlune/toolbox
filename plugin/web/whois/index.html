@@ -5,6 +5,27 @@
 .query-title {
     text-align: right;
 }
+.whois-badge {
+    display: block;
+    padding: 3px 10px;
+    margin: 3px 0 3px 0;
+    background: #f0f4ff;
+    color: #364a63;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.whois-raw-data {
+    background: #f5f6fa;
+    border-radius: 4px;
+    padding: 15px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #364a63;
+    max-height: 400px;
+    overflow-y: auto;
+}
 </style>
 <div class="container-xl" id="app">
 <div class="col-sm-12 col-md-10 col-xl-8 center-block">
@@ -29,7 +50,24 @@
             <div class="nya-title nk-ibx-action-item progress-rating">
                 <span class="nk-menu-text font-weight-bold">查询结果</span>
             </div>
-            <div class="border p-2" v-html="result_info" style="white-space: nowrap;overflow-x: scroll;word-break: break-all;">
+            <div class="alert alert-warning text-center" v-if="!result_info"><h6><em class="icon ni ni-info"></em> 没有查询到该域名Whois信息</h6></div>
+            <div class="col-sm-12 col-md-10 col-xl-8 center-block" v-if="result_info">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tbody>
+                            <tr><td class="query-title">域名</td><td>{{whoisData.domainName}}</td></tr>
+                            <tr><td class="query-title">域名所有者</td><td>{{whoisData.owner || '-'}}</td></tr>
+                            <tr><td class="query-title">注册商</td><td>{{whoisData.registrar}}</td></tr>
+                            <tr><td class="query-title">Whois服务器</td><td>{{whoisData.whoisServer}}</td></tr>
+                            <tr><td class="query-title">注册时间</td><td>{{whoisData.creationDate}}</td></tr>
+                            <tr><td class="query-title">到期时间</td><td>{{whoisData.expirationDate}}</td></tr>
+                            <tr><td class="query-title">更新时间</td><td>{{whoisData.updatedDate}}</td></tr>
+                            <tr><td class="query-title">域名状态</td><td><div v-for="(item, index) in whoisData.states" :key="index">{{item.name}}<span class="text-muted" v-if="item.value">（{{item.value}}）</span></div></td></tr>
+                            <tr><td class="query-title">DNS服务器</td><td><span class="whois-badge" v-for="(ns, index) in whoisData.nameServers" :key="index">{{ns}}</span></td></tr>
+                            <tr><td class="query-title">原始信息</td><td class="whois-raw-data">{{whoisData.rawData}}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -46,7 +84,21 @@ new Vue({
         query_disabled: true,
         input: '',
         showresult: false,
-        result_info: '',
+        result_info: false,
+        whoisData: {
+            cacheTime: '',
+            domainName: '',
+            whoisServer: '',
+            creationDate: '',
+            expirationDate: '',
+            updatedDate: '',
+            nameServers: [],
+            states: [],
+            owner: '',
+            registrar: '',
+            dnssec: '',
+            rawData: '',
+        },
         captcha: null
     },
     mounted() {
@@ -82,8 +134,28 @@ new Vue({
                     success: function (data) {
                         layer.closeAll();
                         if(data.status=='ok'){
+                            if(data.data == null){
+                                that.result_info = false;
+                                that.showresult = true;
+                                captcha.reset();
+                                return;
+                            }
+                            that.result_info = true;
+                            that.whoisData = {
+                                cacheTime: data.data.cacheTime || '',
+                                domainName: data.data.domainName || '',
+                                whoisServer: data.data.whoisServer || '',
+                                creationDate: data.data.creationDate || '',
+                                expirationDate: data.data.expirationDate || '',
+                                updatedDate: data.data.updatedDate || '',
+                                nameServers: Array.isArray(data.data.nameServers) ? data.data.nameServers : [],
+                                states: Array.isArray(data.data.states) ? data.data.states : [],
+                                owner: data.data.owner !== undefined ? data.data.owner : '',
+                                registrar: data.data.registrar || '',
+                                dnssec: data.data.dnssec || '',
+                                rawData: data.data.rawData || '',
+                            };
                             that.showresult = true;
-                            that.result_info = data.data;
                             captcha.reset();
                         }else{
                             alert(data.message);
