@@ -5,7 +5,7 @@
 
 ### 😺 演示地址
 
-* <https://tool.cccyun.cc>
+* <https://lenient269.com>
 
 ## 🎑 说明
 > 严禁用于非法用途     
@@ -19,7 +19,7 @@
 
 ### 🚠 部署
 
-* 从[Release页面](https://github.com/netcccyun/toolbox/releases)下载源代码
+* 下载源代码
 
 * 设置运行目录（绑定目录）为`public`
 
@@ -74,9 +74,10 @@ docker run --name toolbox -dit -p 8081:80 -v /var/toolbox:/app/www netcccyun/too
 
 #### 🍓 鸣谢
 
-* [aoaostar](https://github.com/aoaostar/toolbox)
+* [aoaostar]
 * vue
 * thinkphp
 * layui
 * layuimini
 * DashLite
+
